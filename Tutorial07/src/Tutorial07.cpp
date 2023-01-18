@@ -4,6 +4,7 @@
 // This application demonstrates texturing
 //
 // Copyright (c) Microsoft Corporation. All rights reserved.
+// DiegoQu
 //--------------------------------------------------------------------------------------
 #include <windows.h>
 #include <d3d11.h>
