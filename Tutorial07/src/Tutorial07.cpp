@@ -39,15 +39,6 @@ struct SimpleVertex
     XMFLOAT2 Tex;
 };
 
-//struct CBNeverChanges       
-//{
-//    XMMATRIX mView;
-//};
-
-//struct CBChangeOnResize     
-//{
-//    XMMATRIX mProjection;
-//};
 
 struct Camera
 {
@@ -57,7 +48,7 @@ struct Camera
 
 struct CBChangesEveryFrame
 {
-    XMMATRIX mWorld; //
+    XMMATRIX mWorld; 
     XMFLOAT4 vMeshColor; //Texturas (R,G,B,A)
 };
 
@@ -106,7 +97,6 @@ float F_changing = 0.0002f;
 //--------------------------------------------------------------------------------------
 HRESULT InitWindow(HINSTANCE hInstance, int nCmdShow);
 HRESULT InitDevice();
-//void CleanupDevice(); //Lo cambiamos por destroy
 LRESULT CALLBACK    WndProc(HWND, UINT, WPARAM, LPARAM);
 void Render();
 void update(float deltaTime);
@@ -577,10 +567,6 @@ HRESULT InitDevice()
     return S_OK;
 }
 
-//UPDATE 
-//Esta función está encargada de actualizar la 
-//LÓGICA del programa
-//Matemáticas, física, buffers, etc...
 
 
 
