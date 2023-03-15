@@ -2,27 +2,24 @@
 
 CTime::CTime()
 {
-	m_iCurrentTime;
-	m_iLastTime;
-	m_iTimerFrequency;
 }
 
 CTime::~CTime()
 {
 }
 
-void CTime::init() //Inicializacion
+
+void CTime::init()
 {
-	
-	QueryPerformanceCounter(&m_iLastTime);
-	QueryPerformanceFrequency(&m_iTimerFrequency);
+	QueryPerformanceCounter(&m_lastTime);
+	QueryPerformanceFrequency(&m_timerFrequency);
 }
 
 void CTime::update()
 {
-	QueryPerformanceCounter(&m_iCurrentTime);	
-	m_fDeltaTime = (m_iCurrentTime.QuadPart - m_iLastTime.QuadPart) / (float)m_iTimerFrequency.QuadPart;
-	m_iLastTime = m_iCurrentTime;
+	QueryPerformanceCounter(&m_currentTime);
+	m_fDeltaTime = (m_currentTime.QuadPart - m_lastTime.QuadPart) / (float)m_timerFrequency.QuadPart;
+	m_lastTime = m_currentTime;
 	m_fDeltaTime = min(m_fDeltaTime, 0.1f);
 }
 
