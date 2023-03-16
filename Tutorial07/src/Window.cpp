@@ -55,3 +55,15 @@ HRESULT Window::init(HINSTANCE hInstance, int nCmdShow, WNDPROC wndproc, LPCSTR 
 
     return S_OK;
 }
+
+void 
+Window::update(){
+}
+
+void 
+Window::render(){
+}
+
+void 
+Window::destroy(){
+}

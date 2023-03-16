@@ -1,7 +1,7 @@
 #pragma once
 #include "Prerequisites.h"
 
-// Clase Device para ser usada en el cpp.
+// Declaracion directa a la Clase Device para ser usada en el cpp.
 class Device;
 
 class 
@@ -11,7 +11,8 @@ public:
     ~SamplerState() {};
 
 
-    // Crear SamplerState, dimensiones de la textura. 
+    // Crear SamplerState, para modificar dimensiones de la textura. 
+   
     void
         init(Device device);
 
@@ -25,5 +26,7 @@ public:
         destroy();
 
 public:
+    // Sampler State interface mantiene una descripcion del SamplerState para poder acceder
+    // a ella por operaciones de muestreo de textura
     ID3D11SamplerState* m_sampler = nullptr;
 };

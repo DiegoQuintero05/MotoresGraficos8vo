@@ -19,10 +19,10 @@
 
 // Defines
 #define WINDOWS
-#define WARNING( s )						            \
-{											                      \
-   std::wostringstream os_;					        \
-   os_ << s;								                \
+#define WARNING( s )						                        \
+{											                                  \
+   std::wostringstream os_;					                    \
+   os_ << s;								                            \
    OutputDebugStringW( os_.str().c_str() ); \
 }
 
@@ -32,8 +32,8 @@
 
 #define OutputLOG(_ClassName, _FunctionName, _OutputMessage)           \
 OutputDebugStringA(_ClassName);                                        \
-OutputDebugStringA(" : In Function : ");                               \
+OutputDebugStringA(" : In Function : ");                   \
 OutputDebugStringA(_FunctionName);                                     \
-OutputDebugStringA(" : ");                                             \
+OutputDebugStringA(" : ");                                 \
 OutputDebugStringA(_OutputMessage);                                    \
 OutputDebugStringA("\n");

@@ -19,12 +19,13 @@ public:
 	void
 		destroy();
 
+	// DrawIndexed, No instancia las primitivas
 	void
 		DrawIndexed(unsigned int IndexCount,
 			unsigned int StartIndexLocation,
 			unsigned int BaseVertexLocation);
 
-	// Establecer array de SamplerStates para el pixel shader.
+	// Establecer array de SamplerStates para el pixel shader pipeline.
 	void
 		PSSetSamplers(unsigned int StartSlot,
 			unsigned int NumSamplers,
@@ -72,7 +73,7 @@ public:
 		ClearRenderTargetView(ID3D11RenderTargetView* pRenderTargetView,
 			const float ColorRGBA[4]);
 
-	// Render Target(s) y Depth Stencil Buffer.
+	// Render Target(s) y Depth Stencil Buffer hacia el output-merger stage.
 	void
 		OMSetRenderTargets(unsigned int NumViews,
 			ID3D11RenderTargetView* const* ppRenderTargetViews,
@@ -83,7 +84,7 @@ public:
 		RSSetViewports(unsigned int NumViewports,
 			const D3D11_VIEWPORT* pViewports);
 
-	// Setear InputLayout
+	//  InputLayout para input-assembler stage.
 	void
 		IASetInputLayout(ID3D11InputLayout* pInputLayout);
 

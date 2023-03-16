@@ -1,10 +1,10 @@
 #pragma once
 #include "Prerequisites.h"
 
-// Clase Window para ser usada en el cpp.
+// Declaracion directa a la Clase Window para ser usada en el cpp.
 class Window;
 
-// Dimensiones (Width, Height)
+// Crear Viewport y definir Dimensiones (Width, Height)
 class 
     Viewport{
 public:
@@ -25,5 +25,6 @@ public:
         destroy();
 
 public:
+    //Dimensiones del Viewport.
     D3D11_VIEWPORT m_viewport;
 };

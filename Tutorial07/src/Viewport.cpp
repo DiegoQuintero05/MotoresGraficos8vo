@@ -17,15 +17,15 @@ Viewport::init(Window window) {
     }
 
 
-    void Viewport::update() 
-    {
+    void 
+      Viewport::update(){
 
     }
-    void Viewport::render()
-    {
+    void 
+      Viewport::render(){
         
     }
-    void Viewport::destroy()
-    {
+    void 
+      Viewport::destroy(){
         
     }

@@ -1,10 +1,10 @@
 #pragma once
 #include "Prerequisites.h"
 
-// Clase Device para ser usada en el cpp.
+// Declaracion directa a la Clase Device para ser usada en el cpp.
 class
 	Device;
-// Clase Texture para ser usada en el cpp.
+// Declaracion directa a la Clase Texture para ser usada en el cpp.
 class
 	Texture;
 
@@ -14,7 +14,8 @@ public:
 	RenderTargetView() = default;
 	~RenderTargetView() {};
 
-	// Crear RenderTargetView --> (Vector,BackBuffer)
+	// Crear RenderTargetView, recibe un device y un BackBuffer. Identifica los subrecursos
+	// del RenderTarget que se pueden acceder durante el rendering.
 	void
 		init(Device device, Texture backBuffer, DXGI_FORMAT Format);
 
@@ -28,6 +29,7 @@ public:
 		destroy();
 
 public:
+ 
 	ID3D11RenderTargetView* m_renderTargetView = nullptr;
 
 };

@@ -28,17 +28,14 @@ SamplerState::init(Device device)
 	}
 }
 	void
-		SamplerState::update()
-	{
+		SamplerState::update(){
 	}
 
 	void
-		SamplerState::render()
-	{
+		SamplerState::render(){
 	}
 	 
 	void
-		SamplerState::destroy()
-	{
+		SamplerState::destroy(){
 		SAFE_RELEASE(m_sampler);
 	}

@@ -2,7 +2,7 @@
 #include "Prerequisites.h"
 #include "Commons.h"
 
-// Clase Device para ser usada en el cpp.
+// Declaracion directa a la Clase Device para ser usada en el cpp.
 class
 	Device;
 
@@ -12,9 +12,11 @@ public:
 	Texture() = default;
 	~Texture() {};
 
+	// Inicializar textura desde archivo.
 	void
 		init(Device device, std::string textureName);
 
+	// Inicializar textura desde recursos, crear array 2D de textura.
 	void
 		init(Device device,
 			unsigned int width,

@@ -81,3 +81,11 @@ Texture::init(Device device,
 	}
 
 }
+
+void 
+Texture::update(){
+}
+
+void 
+Texture::render(){
+}

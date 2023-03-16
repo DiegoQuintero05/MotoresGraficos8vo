@@ -66,6 +66,9 @@
     <ClCompile Include="src\Window.cpp">
       <Filter>src</Filter>
     </ClCompile>
+    <ClCompile Include="src\Transform.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Include\Commons.h">
@@ -108,6 +111,9 @@
       <Filter>include</Filter>
     </ClInclude>
     <ClInclude Include="Include\Window.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Transform.h">
       <Filter>include</Filter>
     </ClInclude>
   </ItemGroup>

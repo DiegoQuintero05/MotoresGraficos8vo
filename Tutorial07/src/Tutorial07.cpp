@@ -36,7 +36,8 @@
 //
 //--------------------------------------------------------------------------------------
 
-//Mejor estructura, organizacion de librerias, se guardan los prerequisitos y ya no se cargan por cada script.
+//Mejor estructura, organizacion de librerias, se guardan los prerequisitos y ya no se 
+//cargan por cada script.
 #include "Prerequisites.h"     
 
 // Libreria Time
@@ -53,6 +54,7 @@
 #include "RenderTargetView.h"
 #include "SamplerState.h"
 #include "Viewport.h"
+#include "Transform.h"
 
 //--------------------------------------------------------------------------------------
 // Structures
@@ -76,15 +78,17 @@ SwapChain                           g_swapChain;
 RenderTargetView                    g_renderTargetView;
 SamplerState                        g_samplerState;
 Viewport                            g_viewport;
+Transform                           g_transform;
+Camera                              cam;
 
 D3D_DRIVER_TYPE                     g_driverType = D3D_DRIVER_TYPE_NULL;
 D3D_FEATURE_LEVEL                   g_featureLevel = D3D_FEATURE_LEVEL_11_0;
-ID3D11VertexShader* g_pVertexShader = nullptr;
-ID3D11PixelShader* g_pPixelShader = nullptr;
-ID3D11Buffer* g_pVertexBuffer = nullptr;
-ID3D11Buffer* g_pIndexBuffer = nullptr;
-ID3D11Buffer* g_Camera = nullptr;
-ID3D11Buffer* g_pCBChangesEveryFrame = nullptr;
+ID3D11VertexShader*                 g_pVertexShader = nullptr;
+ID3D11PixelShader*                  g_pPixelShader = nullptr;
+ID3D11Buffer*                       g_pVertexBuffer = nullptr;
+ID3D11Buffer*                       g_pIndexBuffer = nullptr;
+ID3D11Buffer*                       g_Camera = nullptr;
+ID3D11Buffer*                       g_pCBChangesEveryFrame = nullptr;
 
 XMMATRIX                            g_World;
 XMMATRIX                            g_View;
@@ -92,16 +96,13 @@ XMMATRIX                            g_Projection;
 XMFLOAT4                            g_vMeshColor(0.7f, 0.7f, 0.7f, 1.0f);
 
 
-Camera cam;
+
 
 // Variables para P1.
+CTime g_Time;
 
 // Velocidad de movimiento
-float F_speed = 150.0f;
 
-CTime g_Time;
-Vector3 v3Position;
-float F_rotation;
 
 //--------------------------------------------------------------------------------------
 // Forward declarations 
@@ -110,7 +111,7 @@ HRESULT InitWindow(HINSTANCE hInstance, int nCmdShow);
 HRESULT InitDevice();
 LRESULT CALLBACK    WndProc(HWND, UINT, WPARAM, LPARAM);
 void Render();
-void update(float deltaTime);
+void update();
 //Destruir/limpiar los recursos del programa, para asi no llenar la RAM.
 void destroy();
 
@@ -125,36 +126,34 @@ void destroy();
 // Entry point to the program. Initializes everything and goes into a message processing 
 // loop. Idle time is used to render the scene.
 //--------------------------------------------------------------------------------------
-int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLine, int nCmdShow)
-{
+int 
+WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLine, 
+  int nCmdShow){
     UNREFERENCED_PARAMETER(hPrevInstance);
     UNREFERENCED_PARAMETER(lpCmdLine);
 
     if (FAILED(g_window.init(hInstance, nCmdShow, WndProc, "DQWindow")))
         return 0;
 
-    if (FAILED(InitDevice()))
-    {
+    if (FAILED(InitDevice())){
         destroy();
         return 0;
     }
 
     //Init -> Tiempo (Se inicializa el tiempo)
     g_Time.init();
+    g_transform.init();
 
     // Main message loop
     MSG msg = { 0 };
-    while (WM_QUIT != msg.message)
-    {
-        if (PeekMessage(&msg, nullptr, 0, 0, PM_REMOVE))
-        {
+    while (WM_QUIT != msg.message){
+        if (PeekMessage(&msg, nullptr, 0, 0, PM_REMOVE)){
             TranslateMessage(&msg);
             DispatchMessage(&msg);
         }
-        else
-        {
+        else{
             g_Time.update();
-            update(g_Time.m_fDeltaTime);
+            update();
             Render();
         }
     }
@@ -171,8 +170,9 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 //--------------------------------------------------------------------------------------
 // Helper for compiling shaders with D3DX11
 //--------------------------------------------------------------------------------------
-HRESULT CompileShaderFromFile(char* szFileName, LPCSTR szEntryPoint, LPCSTR szShaderModel, ID3DBlob** ppBlobOut)
-{
+HRESULT 
+CompileShaderFromFile(char* szFileName, LPCSTR szEntryPoint, LPCSTR szShaderModel,
+  ID3DBlob** ppBlobOut){
     HRESULT hr = S_OK;
 
     DWORD dwShaderFlags = D3DCOMPILE_ENABLE_STRICTNESS;
@@ -187,8 +187,7 @@ HRESULT CompileShaderFromFile(char* szFileName, LPCSTR szEntryPoint, LPCSTR szSh
     ID3DBlob* pErrorBlob;
     hr = D3DX11CompileFromFile(szFileName, nullptr, nullptr, szEntryPoint, szShaderModel,
         dwShaderFlags, 0, nullptr, ppBlobOut, &pErrorBlob, nullptr);
-    if (FAILED(hr))
-    {
+    if (FAILED(hr)){
         if (pErrorBlob != nullptr)
             OutputDebugStringA((char*)pErrorBlob->GetBufferPointer());
         if (pErrorBlob) pErrorBlob->Release();
@@ -204,8 +203,8 @@ HRESULT CompileShaderFromFile(char* szFileName, LPCSTR szEntryPoint, LPCSTR szSh
 // Create Direct3D device and swap chain 
 // **
 //--------------------------------------------------------------------------------------
-HRESULT InitDevice()
-{
+HRESULT 
+InitDevice(){
     HRESULT hr = S_OK;
 
     // Crear SwapChain
@@ -234,8 +233,7 @@ HRESULT InitDevice()
     // Compilar Shader
     ID3DBlob* pVSBlob = nullptr;
     hr = CompileShaderFromFile("Tutorial07.fx", "VS", "vs_4_0", &pVSBlob);
-    if (FAILED(hr))
-    {
+    if (FAILED(hr)){
         MessageBox(nullptr,
             "The FX file cannot be compiled.  Please run this executable from the directory that contains the FX file.", "Error", MB_OK);
         return hr;
@@ -243,8 +241,7 @@ HRESULT InitDevice()
  
     // Crear vertex shader
     hr = g_device.CreateVertexShader(pVSBlob->GetBufferPointer(), pVSBlob->GetBufferSize(), nullptr, &g_pVertexShader);
-    if (FAILED(hr))
-    {
+    if (FAILED(hr)){
         pVSBlob->Release();
         return hr;
     }
@@ -259,7 +256,8 @@ HRESULT InitDevice()
             D3D11_INPUT_PER_VERTEX_DATA,
             0
         },
-        { "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT /*12*/, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+        { "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT , 
+      D3D11_INPUT_PER_VERTEX_DATA, 0 },
     };
     unsigned int numElements = ARRAYSIZE(layout);
      
@@ -300,12 +298,14 @@ HRESULT InitDevice()
     if (FAILED(hr))
     {
         MessageBox(nullptr,
-            "The FX file cannot be compiled.  Please run this executable from the directory that contains the FX file.", "Error", MB_OK);
+            "The FX file cannot be compiled.  Please run this executable from the directory that contains the FX file.",
+          "Error", MB_OK);
         return hr;
     }
 
     // Create the pixel shader
-    hr = g_device.CreatePixelShader(pPSBlob->GetBufferPointer(), pPSBlob->GetBufferSize(), nullptr, &g_pPixelShader);
+    hr = g_device.CreatePixelShader(pPSBlob->GetBufferPointer(),
+      pPSBlob->GetBufferSize(), nullptr, &g_pPixelShader);
     pPSBlob->Release();
     if (FAILED(hr))
         return hr;
@@ -360,7 +360,8 @@ HRESULT InitDevice()
     // Set vertex buffer
     UINT stride = sizeof(SimpleVertex);
     UINT offset = 0;
-    g_deviceContext.IASetVertexBuffers(0, 1, &g_pVertexBuffer, &stride, &offset);
+    g_deviceContext.IASetVertexBuffers(0, 1, &g_pVertexBuffer,
+      &stride, &offset);
 
     // Create index buffer
     // Create vertex buffer
@@ -445,7 +446,8 @@ HRESULT InitDevice()
 
 
     // Initialize the projection matrix (global)
-    g_Projection = XMMatrixPerspectiveFovLH(XM_PIDIV4, g_window.m_width / (FLOAT)g_window.m_height, 0.01f, 100.0f);
+    g_Projection = XMMatrixPerspectiveFovLH(XM_PIDIV4,
+      g_window.m_width / (FLOAT)g_window.m_height, 0.01f, 100.0f);
 
     cam.mView = XMMatrixTranspose(g_View);
     cam.mProjection = XMMatrixTranspose(g_Projection);
@@ -453,51 +455,43 @@ HRESULT InitDevice()
     return S_OK;
 }
 
-void Input(float deltaTime)
-{
-
-}
 
 
 
 
-void update(float deltaTime)
-{
-    Input(deltaTime);
+void 
+  update(){
 
-    F_rotation += 0.0002f;
-
+  g_transform.m_fRotateNum += 0.0002f;
 
 
+  // Rotate cube around the origin
+  g_World = XMMatrixScaling(g_transform.m_fScaleNum,
+    g_transform.m_fScaleNum,
+    g_transform.m_fScaleNum) *
 
-    //Rotate cube around the origin 
-    //g_World = XMMatrixScaling(.5f, .5f, .5f) * XMMatrixRotationY(deltaTime) * XMMatrixTranslation(1, 0, 0);
-    //Se definen las transformaciones del objeto, su escala, su rotacion y su posicion. Ya que esta en la funcion update, cada que haya un cambio se aplicara.
-    g_World = XMMatrixScaling(0.5f, 0.5f, 0.5f) * XMMatrixRotationY(F_rotation) * XMMatrixTranslation(v3Position.x, v3Position.y, v3Position.z);
+    XMMatrixRotationY(g_transform.m_fRotateNum) *
 
+    XMMatrixTranslation(g_transform.m_v3Position.x,
+      g_transform.m_v3Position.y,
+      g_transform.m_v3Position.z);
+  CBChangesEveryFrame cb;
+  cb.mWorld = XMMatrixTranspose(g_World);
+  cb.vMeshColor = g_vMeshColor;
 
+  g_deviceContext.UpdateSubresource(g_pCBChangesEveryFrame, 0,
+    nullptr, &cb, 0, 0);
 
-    //
-    // Update variables that change once per frame
-    //
-    CBChangesEveryFrame cb;
-    cb.mWorld = XMMatrixTranspose(g_World);
-    cb.vMeshColor = g_vMeshColor;
-
-    //UpdateCamera Buffers
-    g_deviceContext.UpdateSubresource(g_pCBChangesEveryFrame, 0, nullptr, &cb, 0, 0);
-
-    //Update Mesh Buffers
-    g_deviceContext.UpdateSubresource(g_Camera, 0, nullptr, &cam, 0, 0);
-
+  g_deviceContext.UpdateSubresource(g_Camera, 0, nullptr,
+    &cam, 0, 0);
 }
 
 
 //--------------------------------------------------------------------------------------
 // Clean up the objects we've created
 //--------------------------------------------------------------------------------------
-void destroy()
-{
+void 
+  destroy(){
     g_deviceContext.destroy();
     g_samplerState.destroy();
     g_ModelTexture.destroy();
@@ -522,14 +516,13 @@ void destroy()
 // Called every time the application receives a message
 //--------------------------------------------------------------------------------------
 
-// Se llama a esta funcion cada vez que recibe un mensaje. Por ejemplo utiliza wParam ya que establece o obtiene el campo wParam del mensaje. 
-LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
-{
+// Se llama a esta funcion cada vez que recibe un mensaje. Por ejemplo utiliza wParam ya 
+// que establece o obtiene el campo wParam del mensaje. 
+LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam){
     PAINTSTRUCT ps;
     HDC hdc;
 
-    switch (message)
-    {
+    switch (message){
     case WM_PAINT:
         hdc = BeginPaint(hWnd, &ps);
         EndPaint(hWnd, &ps);
@@ -539,7 +532,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         PostQuitMessage(0);
         break;
 
-        //WM_KEYDOWN para las Nonsystem Keys que son las que son presionadas sin ALT, esto nos nos permite usar W,A,S,D u otras teclas como inputs.
+        //WM_KEYDOWN para las Nonsystem Keys que son las que son presionadas sin ALT, esto
+        //nos nos permite usar W,A,S,D u otras teclas como inputs.
     case WM_KEYDOWN:
 
         //wParam para el campo del mensaje. 
@@ -548,38 +542,44 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 
             //Input tecla W.
         case 'W':
-            // Se modifica el Vector3 de la posicion del objeto en su eje "y" (el cual es un float), asi le sumamos a su valor actual la velocidad por el tiempo.
-            v3Position.y += F_speed * g_Time.m_fDeltaTime;
+            // Se modifica el Vector3 de la posicion del objeto en su eje "y" (el cual es
+            //un float), asi le sumamos a su valor actual la velocidad por el tiempo.
+            g_transform.m_v3Position.y += g_transform.m_fSpeed * g_Time.m_fDeltaTime;
             break;
 
             //Input tecla A
         case 'A':
-            // Se modifica el Vector3 de la posicion del objeto en su eje "x" (el cual es un float), asi le restamos a su valor actual la velocidad por el tiempo.
-            v3Position.x -= F_speed * g_Time.m_fDeltaTime;
+            // Se modifica el Vector3 de la posicion del objeto en su eje "x" (el cual es 
+            //un float), asi le restamos a su valor actual la velocidad por el tiempo.
+            g_transform.m_v3Position.x -= g_transform.m_fSpeed * g_Time.m_fDeltaTime;
             break;
 
             //Input tecla S
         case 'S':
-            // Se modifica el Vector3 de la posicion del objeto en su eje "y" (el cual es un float), asi le restamos a su valor actual la velocidad por el tiempo.
-            v3Position.y -= F_speed * g_Time.m_fDeltaTime;
+            // Se modifica el Vector3 de la posicion del objeto en su eje "y" (el cual es 
+            //un float), asi le restamos a su valor actual la velocidad por el tiempo.
+            g_transform.m_v3Position.y -= g_transform.m_fSpeed * g_Time.m_fDeltaTime;
             break;
 
             //Input tecla D
         case 'D':
-            // Se modifica el Vector3 de la posicion del objeto en su eje "x" (el cual es un float), asi le sumamos a su valor actual la velocidad por el tiempo.
-            v3Position.x += F_speed * g_Time.m_fDeltaTime;
+            // Se modifica el Vector3 de la posicion del objeto en su eje "x" (el cual es 
+            //un float), asi le sumamos a su valor actual la velocidad por el tiempo.
+            g_transform.m_v3Position.x += g_transform.m_fSpeed * g_Time.m_fDeltaTime;
             break;
 
             //Input tecla R
         case 'R':
-            // Se modifica el Vector3 de la posicion del objeto en su eje "z" (el cual es un float), asi le sumamos a su valor actual la velocidad por el tiempo.
-            v3Position.z += F_speed * g_Time.m_fDeltaTime;
+            // Se modifica el Vector3 de la posicion del objeto en su eje "z" (el cual es 
+            //un float), asi le sumamos a su valor actual la velocidad por el tiempo.
+            g_transform.m_v3Position.z += g_transform.m_fSpeed * g_Time.m_fDeltaTime;
             break;
 
             //Input tecla F
         case 'F':
-            // Se modifica el Vector3 de la posicion del objeto en su eje "z" (el cual es un float), asi le restamos a su valor actual la velocidad por el tiempo.
-            v3Position.z -= F_speed * g_Time.m_fDeltaTime;
+            // Se modifica el Vector3 de la posicion del objeto en su eje "z" (el cual es 
+            //un float), asi le restamos a su valor actual la velocidad por el tiempo.
+            g_transform.m_v3Position.z -= g_transform.m_fSpeed * g_Time.m_fDeltaTime;
             break;
             // Color Inicial
         case '1':
@@ -611,17 +611,23 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 //--------------------------------------------------------------------------------------
 // Render a frame
 //--------------------------------------------------------------------------------------
-void Render()
-{
+void 
+Render(){
     // Clear the back buffer
     //
     float ClearColor[4] = { 0.0f, 0.125f, 0.3f, 1.0f }; // red, green, blue, alpha
-    g_deviceContext.ClearRenderTargetView(g_renderTargetView.m_renderTargetView, ClearColor);
+    g_deviceContext.ClearRenderTargetView(g_renderTargetView.m_renderTargetView,
+      ClearColor);
     //
     // Clear the depth buffer to 1.0 (max depth)
     //
-    g_deviceContext.ClearDepthStencilView(g_depthStencilView.m_pDepthStencilView, D3D11_CLEAR_DEPTH, 1.0f, 0);
-    g_deviceContext.OMSetRenderTargets(1, &g_renderTargetView.m_renderTargetView, g_depthStencilView.m_pDepthStencilView);
+    g_deviceContext.ClearDepthStencilView(g_depthStencilView.m_pDepthStencilView
+      , D3D11_CLEAR_DEPTH, 1.0f, 0);
+
+    g_deviceContext.OMSetRenderTargets(1,
+      &g_renderTargetView.m_renderTargetView, 
+      g_depthStencilView.m_pDepthStencilView);
+
     g_deviceContext.RSSetViewports(1, &g_viewport.m_viewport);
 
     //Set inputlayout

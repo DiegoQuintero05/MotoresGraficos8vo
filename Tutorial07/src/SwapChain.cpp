@@ -82,23 +82,19 @@ SwapChain::init(Device& device, DeviceContext& deviceContext, Texture& backBuffe
 }
 
 void
-SwapChain::update()
-{
+SwapChain::update(){
 }
 
 void
-SwapChain::render()
-{
+SwapChain::render(){
 }
 
 void
-SwapChain::destroy()
-{
+SwapChain::destroy(){
 	SAFE_RELEASE(m_swapChain);
 }
 
 void
-SwapChain::present()
-{
+SwapChain::present(){
 	m_swapChain->Present(0, 0);
 }

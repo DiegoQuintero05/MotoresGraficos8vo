@@ -1,6 +1,7 @@
 #include "Prerequisites.h" 
 #pragma once
-// Clase Device para ser usada en el cpp.
+
+// Declaracion directa a la Clase Device para ser usada en el cpp.
 class
 Device{
 public:
@@ -18,19 +19,19 @@ public:
 	void
 		destroy();
 
-	// Crear DepthStencil view. 
+	// Crear DepthStencil view para acceder a los recursos. 
 	HRESULT
 		CreateDepthStencilView(ID3D11Resource* pResource,
 			const D3D11_DEPTH_STENCIL_VIEW_DESC* pDesc,
 			ID3D11DepthStencilView** ppDepthStencilView);
 
-	// Crear RenderTarget view.
+	// Crear RenderTarget view para acceder a los recursos.
 	HRESULT
 		CreateRenderTargetView(ID3D11Resource* pResource,
 			const D3D11_RENDER_TARGET_VIEW_DESC* pDesc,
 			ID3D11RenderTargetView** ppRTView);
 
-	// Crear array de texturas 2D.
+	// Crear recurso de texturas 2D.
 	HRESULT
 		CreateTexture2D(const D3D11_TEXTURE2D_DESC* pDesc,
 			const D3D11_SUBRESOURCE_DATA* pInitialData,
@@ -43,7 +44,7 @@ public:
 			ID3D11ClassLinkage* pClassLinkage,
 			ID3D11VertexShader** ppVertexShader);
 
-	// Crear  InputLayout que describe los datos del InputBuffer .
+	// Crear  InputLayout que describe los datos del InputBuffer para input-assembler stage.
 	HRESULT
 		CreateInputLayout(const D3D11_INPUT_ELEMENT_DESC* pInputElementDescs,
 			unsigned int NumElements,
