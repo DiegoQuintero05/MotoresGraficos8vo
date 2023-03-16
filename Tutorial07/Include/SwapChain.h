@@ -17,8 +17,8 @@ class
 class
 	Texture;
 
-class SwapChain
-{
+class 
+	SwapChain{
 public:
 	SwapChain() = default;
 	~SwapChain() {};

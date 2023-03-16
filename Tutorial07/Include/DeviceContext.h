@@ -2,7 +2,7 @@
 #pragma once
 
 class
-	DeviceContext {
+DeviceContext {
 public:
 	DeviceContext() = default;
 	~DeviceContext() { SAFE_RELEASE(m_deviceContext) };

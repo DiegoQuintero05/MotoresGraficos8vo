@@ -5,8 +5,8 @@
 class Window;
 
 // Dimensiones (Width, Height)
-class Viewport
-{
+class 
+    Viewport{
 public:
     
     Viewport() = default;

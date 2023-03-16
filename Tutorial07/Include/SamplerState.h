@@ -4,8 +4,8 @@
 // Clase Device para ser usada en el cpp.
 class Device;
 
-class SamplerState
-{
+class 
+SamplerState{
 public:
     SamplerState() = default;
     ~SamplerState() {};

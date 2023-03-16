@@ -2,12 +2,12 @@
 #pragma once
 
 // Clase Device para ser usada en el cpp.
-class
-	Device;
+class 
+Device;
 
 class
-	DepthStencilView
-{
+DepthStencilView{
+
 public:
 	DepthStencilView() = default;
 	~DepthStencilView() { SAFE_RELEASE(m_pDepthStencilView) };
@@ -25,7 +25,6 @@ public:
 		destroy();
 
 public:
-	// Variables para el cpp
 	ID3D11DepthStencilView* m_pDepthStencilView = nullptr;
 
 };

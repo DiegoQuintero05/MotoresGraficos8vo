@@ -5,7 +5,7 @@
 class Device;
 
 class
-	InputLayout {
+InputLayout {
 public:
 	InputLayout() = default;
 	~InputLayout() { SAFE_RELEASE(m_inputLayout); };

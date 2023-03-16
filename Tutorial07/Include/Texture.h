@@ -7,8 +7,7 @@ class
 	Device;
 
 class
-	Texture
-{
+	Texture{
 public:
 	Texture() = default;
 	~Texture() {};

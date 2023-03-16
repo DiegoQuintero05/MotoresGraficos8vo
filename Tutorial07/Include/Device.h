@@ -2,8 +2,7 @@
 #pragma once
 // Clase Device para ser usada en el cpp.
 class
-	Device
-{
+Device{
 public:
 	Device() = default;
 	~Device() { SAFE_RELEASE(m_device) };

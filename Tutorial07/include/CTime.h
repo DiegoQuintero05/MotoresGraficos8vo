@@ -3,8 +3,8 @@
 
 // Clase Tiempo, nos dara un tiempo para la ejecucion del programa.
 
-class CTime
-{
+class 
+CTime{
 public:
 	CTime();
 	~CTime();
@@ -24,7 +24,6 @@ public:
 public: 
 	float m_fDeltaTime;
 private:
-	// Variables para el cpp
 	LARGE_INTEGER m_currentTime;
 	LARGE_INTEGER m_lastTime;
 	LARGE_INTEGER m_timerFrequency;

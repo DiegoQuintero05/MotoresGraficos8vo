@@ -95,8 +95,10 @@ XMFLOAT4                            g_vMeshColor(0.7f, 0.7f, 0.7f, 1.0f);
 Camera cam;
 
 // Variables para P1.
+
+// Velocidad de movimiento
 float F_speed = 150.0f;
-static float t = 0.0f;
+
 CTime g_Time;
 Vector3 v3Position;
 float F_rotation;
