@@ -10,7 +10,7 @@ public:
 	// Crear Ventana.
 	// nCmdShow: Parametro para minimizar o maximizar la ventana.
 	// WNDPROC: Puntero  a la funcion, define la mayoria del comportamiento.
-	// windowName: String para la clase de la ventana.
+	// windowName: String para la clase de la ventana. Cambio :D
 
 	HRESULT
 		init(HINSTANCE hInstance, int nCmdShow, WNDPROC wndproc, LPCSTR windowName);
